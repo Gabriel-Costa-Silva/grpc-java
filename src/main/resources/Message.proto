@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_package = "br.com.example";
+
+service Message {
+  rpc MessageService (MessageRequest) returns (MessageResponse) {}
+}
+
+message MessageRequest {
+  string name = 1;
+}
+
+message MessageResponse {
+  string message = 1;
+}
+
+
