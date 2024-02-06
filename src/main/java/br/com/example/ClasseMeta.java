@@ -1,13 +1,12 @@
 package br.com.example;
 
 import com.google.api.client.util.Value;
+import io.grpc.xds.shaded.io.envoyproxy.envoy.type.tracing.v2.CustomTag;
 import org.apache.hop.core.HopEnvironment;
 import org.apache.hop.core.Result;
 import org.apache.hop.core.RowMetaAndData;
 import org.apache.hop.core.exception.HopException;
-import org.apache.hop.core.logging.HopLogStore;
-import org.apache.hop.core.logging.LogLevel;
-import org.apache.hop.core.logging.LoggingBuffer;
+import org.apache.hop.core.logging.*;
 import org.apache.hop.core.row.value.ValueMetaString;
 import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.core.variables.Variables;
@@ -17,27 +16,76 @@ import org.apache.hop.pipeline.RowProducer;
 import org.apache.hop.pipeline.engine.IPipelineEngine;
 import org.apache.hop.pipeline.engine.PipelineEngineFactory;
 import org.apache.hop.pipeline.engines.local.LocalPipelineEngine;
+import org.apache.hop.pipeline.engines.localsingle.LocalSinglePipelineEngine;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Resource;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class ClasseMeta {
+    private static Logger logger = Logger.getLogger(ClasseMeta.class.getName());
+    private final static String STEP_NAME_INJECTOR = "Injector";
+    private final static String FIELD_NAME_MSG_ENTRADA = "MsgEntrada";
+
 
     //HopEnvironment.init();
-    public void start (String conteudoMensagem) throws Exception {
 
-        LocalPipelineEngine localPipelineEngine = getLocalPipelineEngine();
+    private static void initHopEnvironment() throws HopException{
+        if(!HopEnvironment.isInitialized()){
+            logger.info("Iniciando HopEnvironment !");
+            HopEnvironment.init();
+            logger.info("HopEnvironment iniciado!");
+        }else{
+            logger.info("HopEnvironment já inicializado!");
+        }
 
-        RowProducer rowProducer = localPipelineEngine.addRowProducer("Injector",0); //localiza o Injector dentro do arquivo .hpl
+    }
+    public static void start (String conteudoMensagem) throws Exception {
 
-        RowMetaAndData rowMetaAndData = new RowMetaAndData(); //String e conteudo
-        rowMetaAndData.addValue(new ValueMetaString("MsgEntrada"),"Conteudo entrada"); //campo que será injetado
-        //pegar o row e
-        rowProducer.putRow(rowMetaAndData.getRowMeta(),rowMetaAndData.getData());
+        initHopEnvironment();
+        IVariables ivariables = Variables.getADefaultVariableSpace();
 
-        rowProducer.finished();
+        JsonMetadataProvider jsonMetadataProvider = new JsonMetadataProvider();
+        jsonMetadataProvider.setBaseFolder(MessageServer.getProperties().getProperty("hop.metadata.folder").toString());
+
+        PipelineMeta pipelineMeta = new PipelineMeta(
+                ClasseMeta.class.getClassLoader().getResourceAsStream("upper-case.hpl")
+                ,jsonMetadataProvider,
+                //true,// tem na documentaçaõ, mas n tem nessa versão do apache-hop
+                ivariables);
+//        retirado de https://blog.csdn.net/qq_41482600/article/details/129751239
+//        IPipelineEngine pipelineEngine = PipelineEngineFactory.createPipelineEngine(
+//                ivariables,
+//                "local",
+//                jsonMetadataProvider,
+//                pm
+//        );
+        SimpleLoggingObject simpleLoggingObject = new SimpleLoggingObject("upper-case", LoggingObjectType.PIPELINE,null);
+
+        LocalPipelineEngine localPipelineEngine = new LocalPipelineEngine(pipelineMeta,ivariables,simpleLoggingObject);//investigar este parent -> iLoggingObject
+
+        localPipelineEngine.setLogLevel(LogLevel.BASIC);
+
+        localPipelineEngine.prepareExecution();
 
         localPipelineEngine.startThreads(); //throw
+
+        logger.info("Entrada do processamento do pipeline");
+        logger.info("metodo 1");
+
+        RowProducer rowProducer = localPipelineEngine.addRowProducer(STEP_NAME_INJECTOR,1); //??valor //localiza o Injector dentro do arquivo .hpl
+        logger.info("metodo 2");
+
+        RowMetaAndData rowMetaAndData = new RowMetaAndData(); //String e conteudo
+        rowMetaAndData.addValue(new ValueMetaString(FIELD_NAME_MSG_ENTRADA),conteudoMensagem); //campo que será injetado
+        //pegar o row e
+        rowProducer.putRow(rowMetaAndData.getRowMeta(),rowMetaAndData.getData());
+        logger.info("metodo 3");
+
+        rowProducer.finished();
+        logger.info("metodo 4");
+
         localPipelineEngine.waitUntilFinished();
 
         Result result = localPipelineEngine.getResult();
@@ -50,36 +98,11 @@ public class ClasseMeta {
 
             }
         } );
+        logger.info("metodo 5");
+
         LoggingBuffer loggingBuffer = HopLogStore.getAppender();
         String log = loggingBuffer.getBuffer(localPipelineEngine.getLogChannelId(),false).toString();
     }
 
-    @NotNull
-    private static LocalPipelineEngine getLocalPipelineEngine() throws HopException {
-        IVariables ivariables = Variables.getADefaultVariableSpace();
-        //caso venha a usar
-        //variables.setVariable("teste","teste");
-       // String metadataFolder = MessageServer.getProperties().getProperty("hop.metadata.folder").toString();
-
-        JsonMetadataProvider jsonMetadataProvider = new JsonMetadataProvider();
-        jsonMetadataProvider.setBaseFolder(MessageServer.getProperties().getProperty("hop.metadata.folder").toString());
-
-        PipelineMeta pm = new PipelineMeta(
-                ClasseMeta.class.getClassLoader().getResourceAsStream("upper-case.hpl")
-                ,jsonMetadataProvider,
-                ivariables);
-//        retirado de https://blog.csdn.net/qq_41482600/article/details/129751239
-//        IPipelineEngine pipelineEngine = PipelineEngineFactory.createPipelineEngine(
-//                ivariables,
-//                "local",
-//                jsonMetadataProvider,
-//                pm
-//        );
-        LocalPipelineEngine localPipelineEngine = new LocalPipelineEngine(pm,ivariables,null);//investigar este parent
-
-        localPipelineEngine.setLogLevel(LogLevel.BASIC);
-        localPipelineEngine.prepareExecution();
-        return localPipelineEngine;
-    }
 
 }

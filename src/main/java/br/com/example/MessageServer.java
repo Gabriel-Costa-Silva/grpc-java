@@ -25,11 +25,8 @@ public class MessageServer {
 
             //instanciamento de propriedades
             System.setProperty("HOP_PLUGIN_BASE_FOLDER",properties.getProperty("hop.plugin"));
+            System.setProperty("HOP_CONFIG_FOLDER",properties.getProperty("hop.config.folder"));
 //            System.setProperty("HOP_PLUGIN_BASE_FOLDER",prop.getProperty("hop.plugin"));
-//            System.setProperty("HOP_PLUGIN_BASE_FOLDER",prop.getProperty("hop.plugin"));
-
-            HopEnvironment.init();
-
 
 
             BindableService prs = ProtoReflectionService.newInstance();
@@ -38,8 +35,10 @@ public class MessageServer {
                 .addService(prs)
                 .addService(new MessageImpl()).build();
             server.start();
+            logger.info("Servidor iniciado");
+
             server.awaitTermination();
-        }catch(IOException|InterruptedException |HopException e ) {
+        }catch(IOException|InterruptedException e ) {
             logger.severe("ERROS:" + e.getMessage());
             throw new RuntimeException(e);
         }
