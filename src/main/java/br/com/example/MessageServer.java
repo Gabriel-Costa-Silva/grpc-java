@@ -1,12 +1,9 @@
 package br.com.example;
 
-import com.google.protobuf.Message;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.ProtoReflectionService;
-import org.apache.hop.core.HopEnvironment;
-import org.apache.hop.core.exception.HopException;
 
 
 import java.io.IOException;
@@ -24,9 +21,13 @@ public class MessageServer {
             properties.load(input);
 
             //instanciamento de propriedades
-            System.setProperty("HOP_PLUGIN_BASE_FOLDER",properties.getProperty("hop.plugin"));
+            System.setProperty("HOP_PLUGIN_BASE_FOLDERS","D:\\apache-hop-client-2.7.0\\hop\\plugins");
             System.setProperty("HOP_CONFIG_FOLDER",properties.getProperty("hop.config.folder"));
-//            System.setProperty("HOP_PLUGIN_BASE_FOLDER",prop.getProperty("hop.plugin"));
+            System.setProperty("HOP_DISABLE_CONSOLE_LOGGING","N");
+
+//            System.setProperty("HOP_CONFIG_FOLDER", "/opt/engine/hop/config");
+//            System.setProperty("HOP_PLUGIN_BASE_FOLDERS", "/opt/engine/hop/plugins");
+//            System.setProperty("HOP_DISABLE_CONSOLE_LOGGING", "Y");
 
 
             BindableService prs = ProtoReflectionService.newInstance();

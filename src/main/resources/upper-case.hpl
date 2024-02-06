@@ -23,22 +23,7 @@
     <hop>
       <from>Injector</from>
       <to>Dummy (do nothing)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing)</from>
-      <to>JSON input</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>JSON input</from>
-      <to>String operations</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>String operations</from>
-      <to>JavaScript</to>
-      <enabled>Y</enabled>
+      <enabled>N</enabled>
     </hop>
     <hop>
       <from>JavaScript</from>
@@ -51,8 +36,23 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
+      <from>String operations</from>
+      <to>JavaScript</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
       <from>Select values</from>
       <to>Write to log</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Generate rows</from>
+      <to>Dummy (do nothing)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing)</from>
+      <to>String operations</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -69,7 +69,7 @@
     </partitioning>
     <attributes/>
     <GUI>
-      <xloc>656</xloc>
+      <xloc>432</xloc>
       <yloc>592</yloc>
     </GUI>
   </transform>
@@ -91,6 +91,38 @@
     </GUI>
   </transform>
   <transform>
+    <name>Generate rows</name>
+    <type>RowGenerator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <length>-1</length>
+        <name>MsgEntrada</name>
+        <nullif>teste</nullif>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+        <type>String</type>
+      </field>
+    </fields>
+    <interval_in_ms>5000</interval_in_ms>
+    <last_time_field>FiveSecondsAgo</last_time_field>
+    <limit>10</limit>
+    <never_ending>N</never_ending>
+    <row_time_field>now</row_time_field>
+    <attributes/>
+    <GUI>
+      <xloc>0</xloc>
+      <yloc>192</yloc>
+    </GUI>
+  </transform>
+  <transform>
     <name>Injector</name>
     <type>Injector</type>
     <description/>
@@ -102,73 +134,17 @@
       <schema_name/>
     </partitioning>
     <fields>
-</fields>
-    <attributes/>
-    <GUI>
-      <xloc>160</xloc>
-      <yloc>96</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>JSON input</name>
-    <type>JsonInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <include>N</include>
-    <include_field/>
-    <rownum>N</rownum>
-    <addresultfile>N</addresultfile>
-    <readurl>N</readurl>
-    <removeSourceField>N</removeSourceField>
-    <IsIgnoreEmptyFile>N</IsIgnoreEmptyFile>
-    <doNotFailIfNoFile>Y</doNotFailIfNoFile>
-    <ignoreMissingPath>Y</ignoreMissingPath>
-    <defaultPathLeafToNull>Y</defaultPathLeafToNull>
-    <rownum_field/>
-    <file>
-      <name>D:\apache-hop-client-2.7.0\hop\teste.txt</name>
-      <filemask/>
-      <exclude_filemask/>
-      <file_required>N</file_required>
-      <include_subfolders>N</include_subfolders>
-    </file>
-    <fields>
       <field>
-        <name>nome</name>
-        <path>$.nome</path>
+        <length/>
+        <name>MsgEntrada</name>
+        <precision/>
         <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
       </field>
     </fields>
-    <limit>0</limit>
-    <IsInFields>Y</IsInFields>
-    <IsAFile>N</IsAFile>
-    <valueField>MsgEntrada</valueField>
-    <shortFileFieldName/>
-    <pathFieldName/>
-    <hiddenFieldName/>
-    <lastModificationTimeFieldName/>
-    <uriNameFieldName/>
-    <rootUriNameFieldName/>
-    <extensionFieldName/>
-    <sizeFieldName/>
     <attributes/>
     <GUI>
-      <xloc>320</xloc>
-      <yloc>336</yloc>
+      <xloc>192</xloc>
+      <yloc>96</yloc>
     </GUI>
   </transform>
   <transform>
@@ -190,7 +166,7 @@
         <jsScript_script>//Script here
 
 var MsgSaida = {};
-MsgSaida.nome = nome;
+MsgSaida.nome = MsgEntrada;
 
 MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
       </jsScript>
@@ -207,7 +183,7 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>496</xloc>
+      <xloc>192</xloc>
       <yloc>512</yloc>
     </GUI>
   </transform>
@@ -230,7 +206,7 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>656</xloc>
+      <xloc>432</xloc>
       <yloc>512</yloc>
     </GUI>
   </transform>
@@ -247,7 +223,7 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     </partitioning>
     <fields>
       <field>
-        <in_stream_name>nome</in_stream_name>
+        <in_stream_name>MsgEntrada</in_stream_name>
         <out_stream_name/>
         <trim_type>none</trim_type>
         <lower_upper>upper</lower_upper>
@@ -262,8 +238,8 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>496</xloc>
-      <yloc>432</yloc>
+      <xloc>192</xloc>
+      <yloc>336</yloc>
     </GUI>
   </transform>
   <transform>
@@ -289,7 +265,7 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>880</xloc>
+      <xloc>656</xloc>
       <yloc>512</yloc>
     </GUI>
   </transform>
