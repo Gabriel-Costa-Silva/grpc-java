@@ -23,7 +23,7 @@
     <hop>
       <from>Injector</from>
       <to>Dummy (do nothing)</to>
-      <enabled>N</enabled>
+      <enabled>Y</enabled>
     </hop>
     <hop>
       <from>Dummy (do nothing)</from>
@@ -53,7 +53,7 @@
     <hop>
       <from>Generate rows</from>
       <to>Dummy (do nothing)</to>
-      <enabled>Y</enabled>
+      <enabled>N</enabled>
     </hop>
     <hop>
       <from>Select values</from>
@@ -82,7 +82,7 @@
     <name>Dummy (do nothing)</name>
     <type>Dummy</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
