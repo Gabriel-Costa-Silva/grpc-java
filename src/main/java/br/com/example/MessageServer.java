@@ -21,13 +21,9 @@ public class MessageServer {
             properties.load(input);
 
             //instanciamento de propriedades
-            System.setProperty("HOP_PLUGIN_BASE_FOLDERS","D:\\apache-hop-client-2.7.0\\hop\\plugins");
+            System.setProperty("HOP_PLUGIN_BASE_FOLDERS",properties.getProperty("hop.plugin.folder"));
             System.setProperty("HOP_CONFIG_FOLDER",properties.getProperty("hop.config.folder"));
-            System.setProperty("HOP_DISABLE_CONSOLE_LOGGING","N");
-
-//            System.setProperty("HOP_CONFIG_FOLDER", "/opt/engine/hop/config");
-//            System.setProperty("HOP_PLUGIN_BASE_FOLDERS", "/opt/engine/hop/plugins");
-//            System.setProperty("HOP_DISABLE_CONSOLE_LOGGING", "Y");
+            System.setProperty("HOP_DISABLE_CONSOLE_LOGGING","N"); //habilita/desabilita log da execução do pipe
 
 
             BindableService prs = ProtoReflectionService.newInstance();

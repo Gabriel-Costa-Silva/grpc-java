@@ -27,46 +27,37 @@ public class ClasseMeta {
     //HopEnvironment.init();
 
     private static void initHopEnvironment() throws HopException{
+        logger.info("Parametros do sistema!");
+        logger.info(System.getProperty("HOP_CONFIG_FOLDER"));
+        logger.info(System.getProperty("HOP_PLUGIN_BASE_FOLDERS"));
+        logger.info("Arquivo de pipeline a ser executado");
+        logger.info(MessageServer.getProperties().getProperty("hop.pipeline.file"));
         if(!HopEnvironment.isInitialized()){
             logger.info("Iniciando HopEnvironment !");
+
             HopEnvironment.init();
-            logger.info(System.getProperty("HOP_CONFIG_FOLDER"));
-            logger.info(System.getProperty("HOP_PLUGIN_BASE_FOLDERS"));
             logger.info("HopEnvironment iniciado!");
         }else{
             logger.info("HopEnvironment já inicializado!");
         }
-
     }
-    public static void start (String conteudoMensagem) throws Exception {
+    public static String start (String conteudoMensagem) throws Exception {
+
+        String returnString = "";
 
         initHopEnvironment();
         IVariables ivariables = Variables.getADefaultVariableSpace();
 
         JsonMetadataProvider jsonMetadataProvider = new JsonMetadataProvider();
-        //jsonMetadataProvider.setBaseFolder(MessageServer.getProperties().getProperty("hop.metadata.folder").toString());
-        jsonMetadataProvider.setBaseFolder("D:/apache-hop-client-2.7.0/hop/home/Metadata");
+        jsonMetadataProvider.setBaseFolder(MessageServer.getProperties().getProperty("hop.metadata.folder").toString());
 
-
-//        PipelineMeta pipelineMeta = new PipelineMeta(
-//                ClasseMeta.class.getClassLoader().getResourceAsStream("upper-case.hpl")
-//                ,jsonMetadataProvider,
-//                //true,// tem na documentaçaõ, mas n tem nessa versão do apache-hop
-//                ivariables);
-
+        //utilizando arquivo diretamente dos recursos do projeto
         PipelineMeta pipelineMeta = new PipelineMeta(
-                "D:\\apache-hop-client-2.7.0\\hop\\home\\x.hpl",
+                MessageServer.getProperties().getProperty("hop.pipeline.file"),
                 jsonMetadataProvider,
-                //true,// tem na documentaçaõ, mas n tem nessa versão do apache-hop
                 ivariables);
 
-//        retirado de https://blog.csdn.net/qq_41482600/article/details/129751239
-//        IPipelineEngine pipelineEngine = PipelineEngineFactory.createPipelineEngine(
-//                ivariables,
-//                "local",
-//                jsonMetadataProvider,
-//                pm
-//        );
+
         SimpleLoggingObject simpleLoggingObject = new SimpleLoggingObject("upper-case", LoggingObjectType.PIPELINE,null);
 
         LocalPipelineEngine localPipelineEngine = new LocalPipelineEngine(pipelineMeta,ivariables,null);//investigar este parent -> iLoggingObject
@@ -77,19 +68,14 @@ public class ClasseMeta {
 
 
         logger.info("Entrada do processamento do pipeline");
-        logger.info("metodo 1");
 
         RowProducer rowProducer = localPipelineEngine.addRowProducer(STEP_NAME_INJECTOR,0); //??valor //localiza o Injector dentro do arquivo .hpl
-        logger.info("metodo 2");
 
         RowMetaAndData rowMetaAndData = new RowMetaAndData(); //String e conteudo
         rowMetaAndData.addValue(new ValueMetaString(FIELD_NAME_MSG_ENTRADA),conteudoMensagem); //campo que será injetado
-        //pegar o row e
         rowProducer.putRow(rowMetaAndData.getRowMeta(),rowMetaAndData.getData());
-        logger.info("metodo 3");
 
         rowProducer.finished();
-        logger.info("metodo 4");
 
         localPipelineEngine.startThreads();
 
@@ -106,9 +92,10 @@ public class ClasseMeta {
             }
         } );
         logger.info("Retorno do KTR "+ retorno);
-
         LoggingBuffer loggingBuffer = HopLogStore.getAppender();
         String log = loggingBuffer.getBuffer(localPipelineEngine.getLogChannelId(),false).toString();
+
+        return retorno.get();
     }
 
 

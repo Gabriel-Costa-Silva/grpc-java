@@ -10,15 +10,13 @@ public class MessageImpl extends MessageGrpc.MessageImplBase{
 
     @Override
     public void messageService(MessageOuterClass.MessageRequest request, StreamObserver<MessageOuterClass.MessageResponse> response) {
-
+        MessageOuterClass.MessageResponse messageResponse = null;
         // Generate a greeting message for the original method
         try {
-            ClasseMeta.start("teste");
+             messageResponse = MessageOuterClass.MessageResponse.newBuilder().setMessage(ClasseMeta.start(request.getName())).build();
         }catch(Exception e){
             e.printStackTrace();
-            logger.info(e.getMessage());
         }
-        MessageOuterClass.MessageResponse messageResponse = MessageOuterClass.MessageResponse.newBuilder().setMessage("Hello " + request.getName()).build();
 
         // Send the reply back to the client.
         response.onNext(messageResponse);

@@ -23,10 +23,20 @@
     <hop>
       <from>Injector</from>
       <to>Dummy (do nothing)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Generate rows</from>
+      <to>Dummy (do nothing)</to>
       <enabled>N</enabled>
     </hop>
     <hop>
-      <from>JavaScript</from>
+      <from>Dummy (do nothing)</from>
+      <to>String operations</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>String operations</from>
       <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
@@ -36,23 +46,8 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>String operations</from>
-      <to>JavaScript</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Select values</from>
       <to>Write to log</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Generate rows</from>
-      <to>Dummy (do nothing)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing)</from>
-      <to>String operations</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -69,8 +64,8 @@
     </partitioning>
     <attributes/>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>592</yloc>
+      <xloc>752</xloc>
+      <yloc>496</yloc>
     </GUI>
   </transform>
   <transform>
@@ -86,8 +81,8 @@
     </partitioning>
     <attributes/>
     <GUI>
-      <xloc>192</xloc>
-      <yloc>208</yloc>
+      <xloc>320</xloc>
+      <yloc>192</yloc>
     </GUI>
   </transform>
   <transform>
@@ -113,12 +108,12 @@
     </fields>
     <interval_in_ms>5000</interval_in_ms>
     <last_time_field>FiveSecondsAgo</last_time_field>
-    <limit>10</limit>
+    <limit>1</limit>
     <never_ending>N</never_ending>
     <row_time_field>now</row_time_field>
     <attributes/>
     <GUI>
-      <xloc>0</xloc>
+      <xloc>96</xloc>
       <yloc>192</yloc>
     </GUI>
   </transform>
@@ -135,56 +130,14 @@
     </partitioning>
     <fields>
       <field>
-        <length/>
         <name>MsgEntrada</name>
-        <precision/>
         <type>String</type>
       </field>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>192</xloc>
-      <yloc>96</yloc>
-    </GUI>
-  </transform>
-  <transform>
-    <name>JavaScript</name>
-    <type>ScriptValueMod</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <optimizationLevel>9</optimizationLevel>
-    <jsScripts>
-      <jsScript>
-        <jsScript_type>0</jsScript_type>
-        <jsScript_name>Script 1</jsScript_name>
-        <jsScript_script>//Script here
-
-var MsgSaida = {};
-MsgSaida.nome = MsgEntrada;
-
-MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
-      </jsScript>
-    </jsScripts>
-    <fields>
-      <field>
-        <name>MsgSaida</name>
-        <rename>MsgSaida</rename>
-        <type>String</type>
-        <length>-1</length>
-        <precision>-1</precision>
-        <replace>N</replace>
-      </field>
-    </fields>
-    <attributes/>
-    <GUI>
-      <xloc>192</xloc>
-      <yloc>512</yloc>
+      <xloc>320</xloc>
+      <yloc>80</yloc>
     </GUI>
   </transform>
   <transform>
@@ -206,8 +159,8 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>512</yloc>
+      <xloc>320</xloc>
+      <yloc>496</yloc>
     </GUI>
   </transform>
   <transform>
@@ -224,7 +177,7 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     <fields>
       <field>
         <in_stream_name>MsgEntrada</in_stream_name>
-        <out_stream_name/>
+        <out_stream_name>MsgSaida</out_stream_name>
         <trim_type>none</trim_type>
         <lower_upper>upper</lower_upper>
         <padding_type>none</padding_type>
@@ -238,8 +191,8 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     </fields>
     <attributes/>
     <GUI>
-      <xloc>192</xloc>
-      <yloc>336</yloc>
+      <xloc>320</xloc>
+      <yloc>320</yloc>
     </GUI>
   </transform>
   <transform>
@@ -257,16 +210,13 @@ MsgSaida = JSON.stringify(MsgSaida);</jsScript_script>
     <displayHeader>Y</displayHeader>
     <limitRows>N</limitRows>
     <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>Messagem de Saida</logmessage>
+    <logmessage/>
     <fields>
-      <field>
-        <name>MsgSaida</name>
-      </field>
-    </fields>
+      </fields>
     <attributes/>
     <GUI>
-      <xloc>656</xloc>
-      <yloc>512</yloc>
+      <xloc>320</xloc>
+      <yloc>640</yloc>
     </GUI>
   </transform>
   <transform_error_handling>
