@@ -159,6 +159,11 @@
             <artifactId>hop-ui</artifactId>
             <version>2.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.hop</groupId>
+            <artifactId>hop-transform-memgroupby</artifactId>
+            <version>2.7.0</version>
+        </dependency>
     </dependencies>
 
 
